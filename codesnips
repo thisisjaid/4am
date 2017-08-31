@@ -1,0 +1,26 @@
+
+4f6fa4dd3cf058f610001b72
+4f6fa4d03cf058f6100007e7
+4f6fa4d93cf058f6100014be
+4f6fa5133cf058f6100033e5
+4f6fa67f3cf058f61000987b
+4f6fa4df3cf058f610001fa1
+4f6fa4d73cf058f6100012d7
+4f6fa6343cf058f61000856f
+4f6fa5143cf058f61000351e
+4f6fa4d73cf058f61000129c
+
+published_after=2016-01-01&published_before=2016-12-31
+
+journals = ["4f6fa4dd3cf058f610001b72","4f6fa4d03cf058f6100007e7","4f6fa4d93cf058f6100014be","4f6fa5133cf058f6100033e5","4f6fa67f3cf058f61000987b","4f6fa4df3cf058f610001fa1","4f6fa4d73cf058f6100012d7","4f6fa6343cf058f61000856f","4f6fa5143cf058f61000351e","4f6fa4d73cf058f61000129c"]
+
+altmetric:PRIMARY> startdate
+1451606400
+
+altmetric:PRIMARY> stopdate
+1483228800
+
+var articles = db.citations.find( { pubdate: { $gte: startdate, $lt: stopdate }, altmetric_jid: { $in: journals}}, {_id: true} ).map( function(u) { return u._id; } );
+
+db.posts.find( { "type": "tweet", "cites_papers": { $in:articles }, user_removed: {$ne: true}  } ).count()
+
