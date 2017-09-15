@@ -4,6 +4,7 @@ import requests
 import ast
 import re
 import nltk
+import numpy as np
 #from fuzzywuzzy import fuzz
 from nltk.tokenize import TweetTokenizer
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
@@ -12,7 +13,7 @@ from langdetect import detect
 from langdetect import DetectorFactory
 DetectorFactory.seed = 0
 
-tweets = pd.read_json('tweets.json',orient='records',lines=True)
+tweets = pd.read_json('./gendertweets-august.json',orient='records',lines=True) # Be sure to also update the export file so you don't overwrite those parsed tweets
 
 # drop id column
 tweets.drop('_id', axis=1, inplace=True)
@@ -92,6 +93,9 @@ tweets.reset_index(drop=True, inplace=True)
 
 tweets['body'] = tweets['body'].str.encode("ascii", errors="ignore").str.decode("ascii")
 
+# Write unique(ish) tweets to new text file so can be analyzed using SentiStrength
+np.savetxt('./gendertweets-aug.txt', tweets.values, fmt='%s', newline='\n')
+
 # calculate averate sentiment with nltk
 
 sid = SentimentIntensityAnalyzer()
@@ -116,6 +120,8 @@ print('NLTK Compound average:',sentiavg)
 print('NLTK positive average:',sentiposavg)
 print('NLTK negative average:',sentinegavg)
 print('NLTK neutral average:',sentineuavg)
+
+# Write NLTK info to a stats file
 
 #pd.options.display.max_rows = 100
 #print('Most common terms in data set (top 100)',pd.Series(' '.join(tweets['body']).lower().split()).value_counts()[:100])
