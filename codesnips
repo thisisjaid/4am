@@ -12,15 +12,22 @@
 
 published_after=2016-01-01&published_before=2016-12-31
 
-journals = ["4f6fa4dd3cf058f610001b72","4f6fa4d03cf058f6100007e7","4f6fa4d93cf058f6100014be","4f6fa5133cf058f6100033e5","4f6fa67f3cf058f61000987b","4f6fa4df3cf058f610001fa1","4f6fa4d73cf058f6100012d7","4f6fa6343cf058f61000856f","4f6fa5143cf058f61000351e","4f6fa4d73cf058f61000129c"]
+journals_gen = ["4f6fa4dd3cf058f610001b72","4f6fa4d03cf058f6100007e7","4f6fa4d93cf058f6100014be","4f6fa5133cf058f6100033e5","4f6fa67f3cf058f61000987b","4f6fa4df3cf058f610001fa1","4f6fa4d73cf058f6100012d7","4f6fa6343cf058f61000856f","4f6fa5143cf058f61000351e","4f6fa4d73cf058f61000129c"]
 
-altmetric:PRIMARY> startdate
-1451606400
+journals_paleo = ["4f6fa4d53cf058f610001044", "57da952eaee83e3eee8b457d", "4f6fa5113cf058f610003286", "4f6fa6053cf058f61000658e", "4f6fa4d63cf058f6100010b9", "4f6fa5113cf058f610003287", "4f6fa8063cf058f61000ba3e", "4f6fa6053cf058f6100065bc", "4f6fa6063cf058f6100066c4", "4f6fa6233cf058f610007ca4"]
 
-altmetric:PRIMARY> stopdate
-1483228800
+journals_cult = ["4f6fa4db3cf058f61000171c", "4f6fa4d93cf058f61000147b", "4f6fa4f63cf058f610002f08", "4f6fa5e93cf058f610005a22", "4f6fa4ea3cf058f610002659", "4f6fa4d83cf058f6100013bf", "4f6fa4e93cf058f610002412", "4f6fa4e83cf058f61000228c"]
 
-var articles = db.citations.find( { pubdate: { $gte: startdate, $lt: stopdate }, altmetric_jid: { $in: journals}}, {_id: true} ).map( function(u) { return u._id; } );
+startdate = 1451606400
 
-db.posts.find( { "type": "tweet", "cites_papers": { $in:articles }, user_removed: {$ne: true}  } ).count()
+stopdate = 1483228800
 
+var articles_gen = db.citations.find( { pubdate: { $gte: startdate, $lt: stopdate }, altmetric_jid: { $in: journals_gen}}, {_id: true} ).map( function(u) { return u._id; } );
+var articles_paleo = db.citations.find( { pubdate: { $gte: startdate, $lt: stopdate }, altmetric_jid: { $in: journals_paleo}}, {_id: true} ).map( function(u) { return u._id; } );
+var articles_cult = db.citations.find( { pubdate: { $gte: startdate, $lt: stopdate }, altmetric_jid: { $in: journals_cult}}, {_id: true} ).map( function(u) { return u._id; } );
+
+db.posts.find( { "type": "tweet", "cites_papers": { $in:articles_gen }, user_removed: {$ne: true}  } ).count()
+db.posts.find( { "type": "tweet", "cites_papers": { $in:articles_paleo }, user_removed: {$ne: true}  } ).count()
+db.posts.find( { "type": "tweet", "cites_papers": { $in:articles_cult }, user_removed: {$ne: true}  } ).count()
+
+mongoexport --db pg2 --collection posts --out tweets^Cson --fields "_id,body,cites_papers" --query "{ 'type': 'tweet', 'cites_papers': { \$in:$citations }, user_removed: {\$ne: true}  }"
