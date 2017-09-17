@@ -30,4 +30,4 @@ db.posts.find( { "type": "tweet", "cites_papers": { $in:articles_gen }, user_rem
 db.posts.find( { "type": "tweet", "cites_papers": { $in:articles_paleo }, user_removed: {$ne: true}  } ).count()
 db.posts.find( { "type": "tweet", "cites_papers": { $in:articles_cult }, user_removed: {$ne: true}  } ).count()
 
-mongoexport --db pg2 --collection posts --out tweets^Cson --fields "_id,body,cites_papers" --query "{ 'type': 'tweet', 'cites_papers': { \$in:$citations }, user_removed: {\$ne: true}  }"
+mongoexport --db pg2 --collection posts --out tweets.json --fields "_id,body,cites_papers" --query "{ 'type': 'tweet', 'cites_papers': { \$in:$citations }, user_removed: {\$ne: true}  }"
