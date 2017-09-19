@@ -8,7 +8,7 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 # calculate average sentiment with nltk
 
-tweets = pd.read_json('./cleanData/tweets_paleo_clean.json')
+tweets = pd.read_json('./cleanData/tweets_cult_clean.json')
 
 sid = SentimentIntensityAnalyzer()
 sentisum = 0
@@ -35,7 +35,7 @@ print('NLTK neutral average:',sentineuavg)
 
 # Write NLTK info to a stats file
 
-stats = open('./analysis/nltk_scores_paleo', 'w+')
+stats = open('./analysis/nltk_scores_cult', 'w+')
 print('NLTK Compound average:',sentiavg,file=stats)
 print('NLTK positive average:',sentiposavg,file=stats)
 print('NLTK negative average:',sentinegavg,file=stats)
@@ -74,7 +74,7 @@ print('SentiStrength negative average:',ss_negavg)
 
 # Write SS info to a stats file
 
-stats = open('./analysis/ss_scores_paleo', 'w+')
+stats = open('./analysis/ss_scores_cult', 'w+')
 print('SentiStrength Compound average:',ss_avg,file=stats)
 print('SentiStrength positive average:',ss_posavg,file=stats)
 print('SentiStrength negative average:',ss_negavg,file=stats)

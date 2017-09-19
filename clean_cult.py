@@ -16,7 +16,7 @@ DetectorFactory.seed = 0 # prevent langdetect from producing spurious results be
 pd.options.display.max_rows = 9999 # list more rows for manual parsing in Pandas
 pd.options.display.max_colwidth = 500 # list row content wider
 
-tweets = pd.read_json('./rawData/tweets_paleo.json',orient='records',lines=True)
+tweets = pd.read_json('./rawData/tweets_cult.json',orient='records',lines=True)
 
 # drop id column
 tweets.drop('_id', axis=1, inplace=True)
@@ -55,7 +55,7 @@ tweets.reset_index(drop=True, inplace=True)
 # remove non-english entries
 
 # manually skip wrongly identified english tweets that would oth be removed
-skiptweets = [43,61,124,153,224,225,356,502,590,618,620,705,770,916,919,952,953,1042,1044,1144,1296,1467,1683,1693,1694,2037,2155,2194,2220,2346,2386,2422,2591,2613,2616,2773,2809,2823,2822,2828,2835,2843,2847,2858,2869,2878,2899]
+skiptweets = [36,75,84,134,156,341,361,549,679,1033,1136,1166]
 dtweets = []
 
 # first pass using langdetect
@@ -74,7 +74,7 @@ tweets.drop(tweets.index[dtweets], inplace=True)
 tweets.reset_index(drop=True, inplace=True)
 
 # second pass using non-ascii char detection
-skiptweets = [2525,2645,2678,2692]
+skiptweets = [94,97,104,105,131,815,956]
 dtweets = []
 
 for i in range(0,len(tweets)):
@@ -100,8 +100,8 @@ tweets['body'] = tweets['body'].str.encode("ascii", errors="ignore").str.decode(
 
 # save cleaned data set
 
-tweets.to_json('./cleanData/tweets_paleo_clean.json')
-tweets.to_csv('./cleanData/tweets_paleo_clean.csv')
+tweets.to_json('./cleanData/tweets_cult_clean.json')
+tweets.to_csv('./cleanData/tweets_cult_clean.csv')
 
 # remove title terms
 

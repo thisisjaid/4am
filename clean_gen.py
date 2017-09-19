@@ -11,7 +11,10 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from langdetect import lang_detect_exception
 from langdetect import detect
 from langdetect import DetectorFactory
-DetectorFactory.seed = 0
+
+DetectorFactory.seed = 0 # prevent langdetect from producing spurious results between runs
+pd.options.display.max_rows = 9999 # list more rows for manual parsing in Pandas
+pd.options.display.max_colwidth = 500 # list row content wider
 
 tweets = pd.read_json('./rawData/tweets_gen.json',orient='records',lines=True)
 
