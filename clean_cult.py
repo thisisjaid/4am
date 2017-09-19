@@ -46,7 +46,7 @@ tweets['body'] = tweets['body'].apply(nltk.tokenize.casual.reduce_lengthening)
 
 # remove specific chars or character groups RTs, colons,semicolons, hashtags and periods
 
-tweets['body'] = tweets['body'].str.replace('RT|:|#|;|\.|\||\[|\]|\(|\)|@|\\|\/','').str.replace('&amp;|&amp','and').str.replace('&gt','').str.replace('\n',' ').str.strip()
+tweets['body'] = tweets['body'].str.replace('RT|:|#|;|\.|\||\[|\]|\(|\)|@|\\|\/',' ').str.replace('&amp;|&amp','and').str.replace('&gt','').str.replace('\n',' ').str.strip()
 
 # cleanup duplicates - again
 tweets.drop_duplicates(['body'], keep='last', inplace=True)
@@ -55,7 +55,7 @@ tweets.reset_index(drop=True, inplace=True)
 # remove non-english entries
 
 # manually skip wrongly identified english tweets that would oth be removed
-skiptweets = [36,75,84,134,156,341,361,549,679,1033,1136,1166]
+skiptweets = [36,75,84,136,343,363,551,681,732,892,923,1035,1139,1169,]
 dtweets = []
 
 # first pass using langdetect
@@ -74,7 +74,7 @@ tweets.drop(tweets.index[dtweets], inplace=True)
 tweets.reset_index(drop=True, inplace=True)
 
 # second pass using non-ascii char detection
-skiptweets = [94,97,104,105,131,815,956]
+skiptweets = [91,94,97,101,102,133]
 dtweets = []
 
 for i in range(0,len(tweets)):
@@ -85,11 +85,6 @@ for i in range(0,len(tweets)):
             dtweets += [i]
 
 tweets.drop(tweets.index[dtweets], inplace=True)
-tweets.reset_index(drop=True, inplace=True)
-
-#manually remove remaining non-english stragglers
-mdtweets = []
-tweets.drop(tweets.index[mdtweets], inplace=True)
 tweets.reset_index(drop=True, inplace=True)
 
 # possibly use https://github.com/seatgeek/fuzzywuzzy to drop further similar tweets here

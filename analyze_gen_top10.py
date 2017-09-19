@@ -91,14 +91,3 @@ print('SentiStrength Compound average:',ss_avg,file=stats)
 print('SentiStrength positive average:',ss_posavg,file=stats)
 print('SentiStrength negative average:',ss_negavg,file=stats)
 stats.close()
-
-#test2 = []
-#for tweet in test:
-#    tweet = re.sub(r"\s+", '+', tweet)
-#    print(tweet)
-#    test2.append(tweet)
-
-
-#The above is OK for one text but inefficient to repeatedly call for many texts. Try instead:
-#  either modify the above to submit a file
-#  or modify the above to send multiple lines through multiple calls of p.communicate(b)

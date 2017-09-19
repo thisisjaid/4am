@@ -46,7 +46,7 @@ tweets['body'] = tweets['body'].apply(nltk.tokenize.casual.reduce_lengthening)
 
 # remove specific chars or character groups RTs, colons,semicolons, hashtags and periods
 
-tweets['body'] = tweets['body'].str.replace('RT|:|#|;|\.|\||\[|\]|\(|\)|@|\\|\/','').str.replace('&amp;|&amp','and').str.replace('&gt','').str.replace('\n',' ').str.strip()
+tweets['body'] = tweets['body'].str.replace('RT|:|#|;|\.|\||\[|\]|\(|\)|@|\\|\/',' ').str.replace('&amp;|&amp','and').str.replace('&gt','').str.replace('\n',' ').str.strip()
 
 # cleanup duplicates - again
 tweets.drop_duplicates(['body'], keep='last', inplace=True)
@@ -55,7 +55,7 @@ tweets.reset_index(drop=True, inplace=True)
 # remove non-english entries
 
 # manually skip wrongly identified english tweets that would oth be removed
-skiptweets = [35, 55, 69, 197, 206, 214, 225, 237, 241, 246, 320, 327, 331, 809, 813, 815, 979, 1151, 1195, 1320, 1405, 1446, 1497, 1498, 1669, 1672, 1686, 1687, 1709, 1715, 1722, 1739, 1752, 1870, 1948, 1966, 2009, 2012, 2038, 2057, 2076, 2085, 2167]
+skiptweets = [35,55,69,163,198,207,216,227,240,244,249,323,330,334,698,701,702,814,818,820,984,1156,1200,1325,1410,1451,1502,1503,1677,1691,1692,1714,1720,1727,1744,1757,1875,1953,1971,2014,2043,2081,2090,2172]
 dtweets = []
 
 # first pass using langdetect
@@ -74,7 +74,7 @@ tweets.drop(tweets.index[dtweets], inplace=True)
 tweets.reset_index(drop=True, inplace=True)
 
 # second pass using non-ascii char detection
-skiptweets = [95, 290, 297, 302, 310, 435, 777, 1552, 1565]
+skiptweets = [98,304,312,314,319,327,454,640,1353,1402,1403,1589,1605,1736,1858]
 dtweets = []
 
 for i in range(0,len(tweets)):
@@ -85,11 +85,6 @@ for i in range(0,len(tweets)):
             dtweets += [i]
 
 tweets.drop(tweets.index[dtweets], inplace=True)
-tweets.reset_index(drop=True, inplace=True)
-
-#manually remove remaining non-english stragglers
-mdtweets = [1451,1507]
-tweets.drop(tweets.index[mdtweets], inplace=True)
 tweets.reset_index(drop=True, inplace=True)
 
 # possibly use https://github.com/seatgeek/fuzzywuzzy to drop further similar tweets here

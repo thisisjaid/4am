@@ -46,7 +46,7 @@ tweets['body'] = tweets['body'].apply(nltk.tokenize.casual.reduce_lengthening)
 
 # remove specific chars or character groups RTs, colons,semicolons, hashtags and periods
 
-tweets['body'] = tweets['body'].str.replace('RT|:|#|;|\.|\||\[|\]|\(|\)|@|\\|\/','').str.replace('&amp;|&amp','and').str.replace('&gt','').str.replace('\n',' ').str.strip()
+tweets['body'] = tweets['body'].str.replace('RT|:|#|;|\.|\||\[|\]|\(|\)|@|\\|\/',' ').str.replace('&amp;|&amp','and').str.replace('&gt','').str.replace('\n',' ').str.strip()
 
 # cleanup duplicates - again
 tweets.drop_duplicates(['body'], keep='last', inplace=True)
@@ -55,7 +55,7 @@ tweets.reset_index(drop=True, inplace=True)
 # remove non-english entries
 
 # manually skip wrongly identified english tweets that would oth be removed
-skiptweets = [43,61,124,153,224,225,356,502,590,618,620,705,770,916,919,952,953,1042,1044,1144,1296,1467,1683,1693,1694,2037,2155,2194,2220,2346,2386,2422,2591,2613,2616,2773,2809,2823,2822,2828,2835,2843,2847,2858,2869,2878,2899]
+skiptweets = [43,61,125,154,226,357,504,592,620,622,707,772,922,955,956,1045,1134,1147,1300,1471,1687,1697,1698,2041,2071,2159,2198,2224,2350,2426,2595,2617,2620,2778,2814,2827,2826,2828,2830,2833,2837,2840,2848,2852,2863,2874,2883,2904,2504,2624,2654]
 dtweets = []
 
 # first pass using langdetect
@@ -74,7 +74,7 @@ tweets.drop(tweets.index[dtweets], inplace=True)
 tweets.reset_index(drop=True, inplace=True)
 
 # second pass using non-ascii char detection
-skiptweets = [2525,2645,2678,2692]
+skiptweets = [2527,2648,2684,2698]
 dtweets = []
 
 for i in range(0,len(tweets)):
@@ -85,11 +85,6 @@ for i in range(0,len(tweets)):
             dtweets += [i]
 
 tweets.drop(tweets.index[dtweets], inplace=True)
-tweets.reset_index(drop=True, inplace=True)
-
-#manually remove remaining non-english stragglers
-mdtweets = []
-tweets.drop(tweets.index[mdtweets], inplace=True)
 tweets.reset_index(drop=True, inplace=True)
 
 # possibly use https://github.com/seatgeek/fuzzywuzzy to drop further similar tweets here
