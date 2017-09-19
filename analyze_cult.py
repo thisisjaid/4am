@@ -1,5 +1,8 @@
 import pandas as pd
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import subprocess
+import shlex
+import sys
 
 # Print most common terms in dataset
 
@@ -48,9 +51,7 @@ def RateSentiment(sentiString):
     b = bytes(sentiString.replace(" ","+"), 'utf-8')
     stdout_byte, stderr_text = p.communicate(b)
     stdout_text = stdout_byte.decode("utf-8")
-    #replace the tab with a space between the positive and negative ratings. e.g. 1    -5 -> 1 -5
     return stdout_text
-#An example to illustrate calling the process.
 
 ss_sum = 0
 ss_pos = 0

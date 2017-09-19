@@ -52,9 +52,7 @@ def RateSentiment(sentiString):
     b = bytes(sentiString.replace(" ","+"), 'utf-8')
     stdout_byte, stderr_text = p.communicate(b)
     stdout_text = stdout_byte.decode("utf-8")
-    #replace the tab with a space between the positive and negative ratings. e.g. 1    -5 -> 1 -5
     return stdout_text
-#An example to illustrate calling the process.
 
 ss_sum = 0
 ss_pos = 0
@@ -76,11 +74,19 @@ print('SentiStrength Compound average:',ss_avg)
 print('SentiStrength positive average:',ss_posavg)
 print('SentiStrength negative average:',ss_negavg)
 
-test2 = []
-for tweet in test:
-    tweet = re.sub(r"\s+", '+', tweet)
-    print(tweet)
-    test2.append(tweet)
+# Write SS info to a stats file
+
+stats = open('./analysis/ss_scores_gen', 'w+')
+print('SentiStrength Compound average:',ss_avg,file=stats)
+print('SentiStrength positive average:',ss_posavg,file=stats)
+print('SentiStrength negative average:',ss_negavg,file=stats)
+stats.close()
+
+#test2 = []
+#for tweet in test:
+#    tweet = re.sub(r"\s+", '+', tweet)
+#    print(tweet)
+#    test2.append(tweet)
 
 
 #The above is OK for one text but inefficient to repeatedly call for many texts. Try instead:

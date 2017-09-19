@@ -11,7 +11,9 @@ import sys
 
 # calculate average sentiment with nltk
 
-tweets = pd.read_json('./cleanData/tweets_paleo_clean.json')
+top10 = [5110616,6050273,7360918,8175741,6147115,12469790,5980250,6164135,6524203,13260383]
+
+tweets = pd.read_json('./cleanData/tweets_gen_clean.json')
 
 sid = SentimentIntensityAnalyzer()
 sentisum = 0
@@ -19,17 +21,21 @@ sentipos = 0
 sentineg = 0
 sentineu = 0
 
-for i in range(0,len(tweets)):
-    pscores = sid.polarity_scores(tweets['body'][i])
-    sentisum += pscores['compound']
-    sentipos += pscores['pos']
-    sentineg += pscores['neg']
-    sentineu += pscores['neu']
+numtop10 = 0
 
-sentiavg = sentisum / len(tweets)
-sentiposavg = sentipos / len(tweets)
-sentinegavg = sentineg / len(tweets)
-sentineuavg = sentineu / len(tweets)
+for i in range(0,len(tweets)):
+    if pd.Series(eval(tweets['cites_papers'][i])).isin(top10).any():
+        pscores = sid.polarity_scores(tweets['body'][i])
+        sentisum += pscores['compound']
+        sentipos += pscores['pos']
+        sentineg += pscores['neg']
+        sentineu += pscores['neu']
+        numtop10 += 1
+
+sentiavg = sentisum / numtop10
+sentiposavg = sentipos / numtop10
+sentinegavg = sentineg / numtop10
+sentineuavg = sentineu / numtop10
 
 print('NLTK Compound average:',sentiavg)
 print('NLTK positive average:',sentiposavg)
@@ -38,12 +44,13 @@ print('NLTK neutral average:',sentineuavg)
 
 # Write NLTK info to a stats file
 
-stats = open('./analysis/nltk_scores_paleo', 'w+')
+stats = open('./analysis/nltk_scores_gen_top10', 'w+')
 print('NLTK Compound average:',sentiavg,file=stats)
 print('NLTK positive average:',sentiposavg,file=stats)
 print('NLTK negative average:',sentinegavg,file=stats)
 print('NLTK neutral average:',sentineuavg,file=stats)
 stats.close()
+
 
 # Run through SentiStrength
 def RateSentiment(sentiString):
@@ -57,13 +64,17 @@ ss_sum = 0
 ss_pos = 0
 ss_neg = 0
 
+numtop10 = 0
+
 for i in range(0,len(tweets)):
-    ssrating = RateSentiment(tweets['body'][i]).split()
-    ss_sum += int(ssrating[2])
-    ss_pos += int(ssrating[0])
-    ss_neg += int(ssrating[1])
-    print(i/len(tweets)*100," percent complete", end='\r')
-    sys.stdout.flush()
+    if pd.Series(eval(tweets['cites_papers'][i])).isin(top10).any():
+        ssrating = RateSentiment(tweets['body'][i]).split()
+        ss_sum += int(ssrating[2])
+        ss_pos += int(ssrating[0])
+        ss_neg += int(ssrating[1])
+        print(i/len(tweets)*100," percent complete", end='\r')
+        sys.stdout.flush()
+        numtop10 += 1
 
 ss_avg = ss_sum / len(tweets)
 ss_posavg = ss_pos / len(tweets)
@@ -75,8 +86,19 @@ print('SentiStrength negative average:',ss_negavg)
 
 # Write SS info to a stats file
 
-stats = open('./analysis/ss_scores_paleo', 'w+')
+stats = open('./analysis/ss_scores_gen_top10', 'w+')
 print('SentiStrength Compound average:',ss_avg,file=stats)
 print('SentiStrength positive average:',ss_posavg,file=stats)
 print('SentiStrength negative average:',ss_negavg,file=stats)
 stats.close()
+
+#test2 = []
+#for tweet in test:
+#    tweet = re.sub(r"\s+", '+', tweet)
+#    print(tweet)
+#    test2.append(tweet)
+
+
+#The above is OK for one text but inefficient to repeatedly call for many texts. Try instead:
+#  either modify the above to submit a file
+#  or modify the above to send multiple lines through multiple calls of p.communicate(b)
