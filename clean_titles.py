@@ -5,8 +5,6 @@ import re
 import numpy as np
 from nltk.tokenize import TweetTokenizer
 
-########################  Gender studies ##########################
-
 def title_clean(dataset):
 
     tweets = pd.read_json('./cleanData/tweets_'+dataset+'_clean.json')
@@ -30,13 +28,8 @@ def title_clean(dataset):
     print("Total records changed",tchanged)
 
     # clean up barren tweets (empty or very short)
-    dtweets = []
 
-    for i in range(0,len(tweets)):
-        if len(tweets['body'][i]) <= 3:
-            dtweets += [i]
-
-    tweets.drop(tweets.index[dtweets], inplace=True)
+    tweets = tweets[tweets['body'].map(len) > 3]
     tweets.reset_index(drop=True, inplace=True)
 
     # save cleaned data set
@@ -44,6 +37,6 @@ def title_clean(dataset):
     tweets.to_json('./cleanData/tweets_'+dataset+'_clean_notitles.json')
     tweets.to_csv('./cleanData/tweets_'+dataset+'_clean_notitles.csv')
 
-title_clean('gen')
+#title_clean('gen')
 title_clean('paleo')
 title_clean('cult')
