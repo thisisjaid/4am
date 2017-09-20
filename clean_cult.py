@@ -55,7 +55,7 @@ tweets.reset_index(drop=True, inplace=True)
 # remove non-english entries
 
 # manually skip wrongly identified english tweets that would oth be removed
-skiptweets = [36,75,84,136,343,363,551,681,732,892,923,1035,1139,1169,]
+skiptweets = [36,75,84,136,343,363,551,681,732,892,923,1035,1139,1169]
 dtweets = []
 
 # first pass using langdetect
