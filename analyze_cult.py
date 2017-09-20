@@ -104,6 +104,7 @@ plt.title('Cultural Studies NLTK Neutral Score Distribution')
 plt.savefig("graphs/cult_nltk_neu.svg")
 
 plt.clf()
+plt.xlim(-4, 4) # force x limits as ss_com has 0 -4 records to keep graph aspect
 tweets['ss_com'].hist(color='k', alpha=0.5, bins=50)
 plt.title('Cultural Studies SentiStrength Compound Score Distribution')
 plt.savefig("graphs/cult_ss_com.svg")
