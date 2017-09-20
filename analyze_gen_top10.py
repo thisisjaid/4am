@@ -13,7 +13,7 @@ import sys
 
 top10 = [5110616,6050273,7360918,8175741,6147115,12469790,5980250,6164135,6524203,13260383]
 
-tweets = pd.read_json('./cleanData/tweets_gen_clean.json')
+tweets = pd.read_json('./cleanData/tweets_gen_clean_notitles.json')
 
 sid = SentimentIntensityAnalyzer()
 sentisum = 0
