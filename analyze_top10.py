@@ -4,13 +4,6 @@ import subprocess
 import shlex
 import sys
 
-# Print most common terms in dataset
-
-#pd.options.display.max_rows = 100
-#print('Most common terms in data set (top 100)',pd.Series(' '.join(tweets['body']).lower().split()).value_counts()[:100])
-
-# calculate average sentiment with nltk
-
 top10 = [5110616,6050273,7360918,8175741,6147115,12469790,5980250,6164135,6524203,13260383]
 
 tweets = pd.read_json('./cleanData/tweets_gen_clean_notitles.json')
