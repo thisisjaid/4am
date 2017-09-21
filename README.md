@@ -7,7 +7,7 @@ This is a research project for the 4:AM conference that investigates whether gen
 * Matplotlib (pip install matplotlib) for graphs
 * langdetect (pip install langdetect) for language detection
 * Pandas (pip install pandas) for data manipulation
-* SentiStrengthCom.jar - this is the commercial JAVA version of SentiStrength, can be obtained free for research purposes from http://sentistrength.wlv.ac.uk/
+* SentiStrengthCom.jar - this is the commercial JAVA version of SentiStrength and is not included due to licensing but can be obtained free for research purposes from http://sentistrength.wlv.ac.uk/ (SentiStrengthData which is the word term data sets for SentiStrength are free for general use and _are_ included)
 
 ## CSV/JSON data files
 These are exports of the full-text of tweets mentioning articles published in 2016 in the Top 10 gender studies, cultural studies, and paleontology journals (as determined by SciMago Journal Rank). These JSON files were exported directly from the Altmetric database on 17 September 2017. 
