@@ -4,83 +4,93 @@ import subprocess
 import shlex
 import sys
 
-top10 = [5110616,6050273,7360918,8175741,6147115,12469790,5980250,6164135,6524203,13260383]
-
-tweets = pd.read_json('./cleanData/tweets_gen_clean_notitles.json')
-
-sid = SentimentIntensityAnalyzer()
-sentisum = 0
-sentipos = 0
-sentineg = 0
-sentineu = 0
-
-numtop10 = 0
-
-for i in range(0,len(tweets)):
-    if pd.Series(eval(tweets['cites_papers'][i])).isin(top10).any():
-        pscores = sid.polarity_scores(tweets['body'][i])
-        sentisum += pscores['compound']
-        sentipos += pscores['pos']
-        sentineg += pscores['neg']
-        sentineu += pscores['neu']
-        numtop10 += 1
-
-sentiavg = sentisum / numtop10
-sentiposavg = sentipos / numtop10
-sentinegavg = sentineg / numtop10
-sentineuavg = sentineu / numtop10
-
-print('NLTK Compound average:',sentiavg)
-print('NLTK positive average:',sentiposavg)
-print('NLTK negative average:',sentinegavg)
-print('NLTK neutral average:',sentineuavg)
-
-# Write NLTK info to a stats file
-
-stats = open('./analysis/nltk_scores_gen_top10', 'w+')
-print('NLTK Compound average:',sentiavg,file=stats)
-print('NLTK positive average:',sentiposavg,file=stats)
-print('NLTK negative average:',sentinegavg,file=stats)
-print('NLTK neutral average:',sentineuavg,file=stats)
-stats.close()
-
-
-# Run through SentiStrength
 def RateSentiment(sentiString):
-    p = subprocess.Popen(shlex.split("java -jar SentiStrengthCom.jar stdin scale sentidata SentiStrengthData/"),stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-    b = bytes(sentiString.replace(" ","+"), 'utf-8')
+    p = subprocess.Popen(shlex.split('java -jar SentiStrengthCom.jar stdin scale sentidata SentiStrengthData/'),stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    b = bytes(sentiString.replace(' ','+'), 'utf-8')
     stdout_byte, stderr_text = p.communicate(b)
-    stdout_text = stdout_byte.decode("utf-8")
+    stdout_text = stdout_byte.decode('utf-8')
     return stdout_text
 
-ss_sum = 0
-ss_pos = 0
-ss_neg = 0
+# set of specific Altmetric paper IDs we want to pull from data set
+# to analyse tweet scores for
+specific = [5110616,6050273,7360918,8175741,6147115,12469790,5980250,6164135,6524203,13260383]
 
-numtop10 = 0
+# load data set
+tweets = pd.read_json('./cleanData/tweets_gen_clean_notitles.json')
 
+# initialize NLTK VADER analyzer
+sid = SentimentIntensityAnalyzer()
+
+# create arrays to store scores in for each class
+nltk_com = []
+nltk_pos = []
+nltk_neg = []
+nltk_neu = []
+numspecific = 0
+
+# calculate and store scores
 for i in range(0,len(tweets)):
-    if pd.Series(eval(tweets['cites_papers'][i])).isin(top10).any():
+    if pd.Series(eval(tweets['cites_papers'][i])).isin(specific).any():    
+        pscores = sid.polarity_scores(tweets['body'][i])
+        nltk_com.append(pscores['compound'])
+        nltk_pos.append(pscores['pos'])
+        nltk_neg.append(pscores['neg'])
+        nltk_neu.append(pscores['neu'])
+        numspecific += 1
+
+# add dataframe columns
+tweets['nltk_com'] = nltk_com
+tweets['nltk_pos'] = nltk_pos
+tweets['nltk_neg'] = nltk_neg
+tweets['nltk_neu'] = nltk_neu
+
+# calculate and print means
+print('NLTK Compound average:',tweets['nltk_com'].mean())
+print('NLTK positive average:',tweets['nltk_pos'].mean())
+print('NLTK negative average:',tweets['nltk_neg'].mean())
+print('NLTK neutral average:',tweets['nltk_neu'].mean())
+
+# write NLTK mean scores to a stats file
+
+stats = open('./analysis/nltk_scores_specific_gen', 'w+')
+print('NLTK Compound average:',tweets['nltk_com'].mean(),file=stats)
+print('NLTK positive average:',tweets['nltk_pos'].mean(),file=stats)
+print('NLTK negative average:',tweets['nltk_neg'].mean(),file=stats)
+print('NLTK neutral average:',tweets['nltk_neu'].mean(),file=stats)
+stats.close()
+
+# Run through SentiStrength
+
+# create score storage arrays
+ss_com = []
+ss_pos = []
+ss_neg = []
+numspecific = 0
+
+# calculate and store scores
+for i in range(0,len(tweets)):
+    if pd.Series(eval(tweets['cites_papers'][i])).isin(specific)any():    
         ssrating = RateSentiment(tweets['body'][i]).split()
-        ss_sum += int(ssrating[2])
-        ss_pos += int(ssrating[0])
-        ss_neg += int(ssrating[1])
-        print(i/len(tweets)*100," percent complete", end='\r')
+        ss_com.append(int(ssrating[2]))
+        ss_pos.append(int(ssrating[0]))
+        ss_neg.append(int(ssrating[1]))
+        print(i/len(tweets)*100,' percent complete', end='\r')
         sys.stdout.flush()
-        numtop10 += 1
+        numspecific += 1
 
-ss_avg = ss_sum / len(tweets)
-ss_posavg = ss_pos / len(tweets)
-ss_negavg = ss_neg / len(tweets)
+# create new columns
+tweets['ss_com'] = ss_com
+tweets['ss_pos'] = ss_pos
+tweets['ss_neg'] = ss_neg
 
-print('SentiStrength Compound average:',ss_avg)
-print('SentiStrength positive average:',ss_posavg)
-print('SentiStrength negative average:',ss_negavg)
+# calculate and print score means
+print('SentiStrength Compound average:',tweets['ss_com'].mean())
+print('SentiStrength positive average:',tweets['ss_pos'].mean())
+print('SentiStrength negative average:',tweets['ss_neg'].mean())
 
-# Write SS info to a stats file
-
-stats = open('./analysis/ss_scores_gen_top10', 'w+')
-print('SentiStrength Compound average:',ss_avg,file=stats)
-print('SentiStrength positive average:',ss_posavg,file=stats)
-print('SentiStrength negative average:',ss_negavg,file=stats)
+# Write SS mean scores to a stats file
+stats = open('./analysis/ss_scores_specific_gen', 'w+')
+print('SentiStrength Compound average:',tweets['ss_com'].mean(),file=stats)
+print('SentiStrength positive average:',tweets['ss_pos'].mean(),file=stats)
+print('SentiStrength negative average:',tweets['ss_neg'].mean(),file=stats)
 stats.close()
