@@ -7,7 +7,7 @@ This is a research project for the 4:AM conference that investigates whether gen
 * Matplotlib (pip install matplotlib) for graphs
 * langdetect (pip install langdetect) for language detection
 * Pandas (pip install pandas) for data manipulation
-* SentiStrengthCom.jar - must be placed in the root of the repository - this is the commercial JAVA version of SentiStrength and is not included due to licensing but can be obtained free for research purposes from http://sentistrength.wlv.ac.uk/ (SentiStrengthData which is the word term data sets for SentiStrength are free for general use and _are_  included) - 
+* SentiStrengthCom.jar - must be placed in the root of the repository - this is the commercial JAVA version of SentiStrength and is not included due to licensing but can be obtained free for research purposes from http://sentistrength.wlv.ac.uk/ (SentiStrengthData which is the word term data sets for SentiStrength are free for general use and _are_  included) 
 
 ## Files
 * clean_data.py - main data cleanup script, see contents for details on cleanup operations performed
