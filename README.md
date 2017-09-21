@@ -3,7 +3,7 @@ This is a research project for the 4:AM conference that investigates whether gen
 
 ## Requirements
 * Python3
-* NLTK (pip install nltk)
+* NLTK (pip install nltk) - processing and VADER sentiment analysys tools
 * Matplotlib (pip install matplotlib) for graphs
 * langdetect (pip install langdetect) for language detection
 * Pandas (pip install pandas) for data manipulation
@@ -25,5 +25,14 @@ Contains score outputs for the two scoring algorithms used for each data set.
 ## Graphs folder
 Contains graphs of score distribution for each scoring algorithm and each data set.
 
+## Licenses and copyright
+All of the code and sample data in this repository is released under GPLv3 General License, with the exception of the SentiStrengthData directory which although free for use, remains the intellectual property of the SentiStrength authors (see http://sentistrength.wlv.ac.uk/ for details)
+
 ## Acknowledgements
+Many thanks to Dr. Mike Thelwall for granting us access to SentiStrength software.
 Thanks to @konieczkow for helping with data export on short notice.
+
+VADER sentiment analysis tools
+Hutto, C.J. & Gilbert, E.E. (2014). VADER: A Parsimonious Rule-based Model for
+Sentiment Analysis of Social Media Text. Eighth International Conference on
+Weblogs and Social Media (ICWSM-14). Ann Arbor, MI, June 2014
