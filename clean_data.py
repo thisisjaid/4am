@@ -1,6 +1,7 @@
 import pandas as pd
 import re
 import json
+import sys
 import requests
 from nltk import tokenize
 from langdetect import lang_detect_exception
@@ -11,7 +12,6 @@ DetectorFactory.seed = 0 # prevent langdetect from producing spurious results be
 
 def title_clean(dataset):
     tchanged = 0
-
     for i in range(0,len(dataset)):
         # parse the papers cited in each tweet
         for j in eval(dataset['cites_papers'][i]):
@@ -22,14 +22,11 @@ def title_clean(dataset):
             if dataset['body'][i] != dataset['body'][i].replace(json_data['title'],''):
                 dataset['body'][i] = dataset['body'][i].replace(json_data['title'],'')
                 tchanged += 1
-                
     # uncomment to see how many tweets have had titles removed
     # print("Total records changed",tchanged)
-
     # clean up barren tweets (empty or very short)
-    dataset = dataset[dataset['body'].map(len) > 3]
+    dataset = dataset[dataset['body'].str.split().str.len() > 1]
     dataset.reset_index(drop=True, inplace=True)
-
     return dataset
 
 def clean_non_english(dataset,skiptweets):
@@ -61,55 +58,40 @@ def clean_non_ascii(dataset,skiptweets):
     dataset.reset_index(drop=True, inplace=True)
 
 def clean_tweets(setname,skiptweets_ne,skiptweets_na):
-
     tweets = pd.read_json('./rawData/tweets_'+setname+'.json',orient='records',lines=True)
-
     # drop id column which we don't actually need
     tweets.drop('_id', axis=1, inplace=True)
-
     # set column type to string
     tweets['body'] = tweets['body'].astype(str)
     tweets['cites_papers'] = tweets['cites_papers'].astype(str)
-
     # make columns format list-like so we can parse with eval into arrays later on
     tweets['cites_papers'] = tweets['cites_papers'].str.replace('{\'\$numberLong\':','').str.replace('\'','').str.replace('}','').str.replace(' ','')
-
     # cleanup duplicates
     tweets.drop_duplicates(['body'], keep='last', inplace=True)
     tweets.reset_index(drop=True, inplace=True)
-
     # remove URLS and mistyped URLs missing semicolons as well as http(s) stragglers
     tweets['body'].replace(re.compile(r"http.?:?//[^\s]+[\s]?"), "", inplace=True)
     tweets['body'].replace(re.compile(r"http.?:?/?/?"), "", inplace=True)
-
     # remove handles
     tweets['body'] = tweets['body'].apply(tokenize.casual.remove_handles)
-
     # reduce characters that repeat more than 3 times to 3 instances
     tweets['body'] = tweets['body'].apply(tokenize.casual.reduce_lengthening)
-
     # remove/replace specific chars or character groups RTs, colons,semicolons, hashtags and periods and extraneous space
     tweets['body'] = tweets['body'].str.replace('RT|:|#|;|\.|\||\[|\]|\(|\)|@|\\|\/',' ').str.replace('&amp;|&amp','and').str.replace('&gt','').str.replace('\n',' ').str.strip()
-
     # cleanup duplicates again
     tweets.drop_duplicates(['body'], keep='last', inplace=True)
     tweets.reset_index(drop=True, inplace=True)
-
     # use language detection to remove non-english entries
     clean_non_english(tweets,skiptweets_ne)
-
     # use non-ascii char detection to remove any remaining un-parseable tweets
     clean_non_ascii(tweets,skiptweets_na)
-
     # remove remaining non-ascii chars from tweets
     tweets['body'] = tweets['body'].str.encode("ascii", errors="ignore").str.decode("ascii")
-
     # remove titles
     tweets = title_clean(tweets)
-
     # save cleaned data set
-    tweets.to_json('./cleanData/tweets_'+setname+'_clean_notitles.json')
-    tweets.to_csv('./cleanData/tweets_'+setname+'_clean_notitles.csv')
+    tweets.to_json('./cleanData/tweets_'+setname+'_clean_notitles2.json')
+    tweets.to_csv('./cleanData/tweets_'+setname+'_clean_notitles2.csv')
 
 # sets of tweets that are erroneously detected as non-english (manually selected)
 skip_nonenglish = {
