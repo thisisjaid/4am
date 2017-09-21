@@ -22,8 +22,9 @@ def title_clean(dataset):
             if dataset['body'][i] != dataset['body'][i].replace(json_data['title'],''):
                 dataset['body'][i] = dataset['body'][i].replace(json_data['title'],'')
                 tchanged += 1
-
-    print("Total records changed",tchanged)
+                
+    # uncomment to see how many tweets have had titles removed
+    # print("Total records changed",tchanged)
 
     # clean up barren tweets (empty or very short)
     dataset = dataset[dataset['body'].map(len) > 3]
@@ -41,7 +42,8 @@ def clean_non_english(dataset,skiptweets):
         else:
             if not tweetlang == 'en':
                 if i not in skiptweets:
-                    print(i,dataset['body'][i])
+                    # uncomment to see what is being removed
+                    # print(i,dataset['body'][i])
                     dtweets += [i]
     dataset.drop(dataset.index[dtweets], inplace=True)
     dataset.reset_index(drop=True, inplace=True)
@@ -52,7 +54,8 @@ def clean_non_ascii(dataset,skiptweets):
         perc_ascii = (len(dataset['body'][i].encode()) - len(dataset['body'][i])) / len(dataset['body'][i].encode())
         if perc_ascii > 0.08:
             if i not in skiptweets:
-                print(i,dataset['body'][i])
+                # uncomment to see what is being removed
+                # print(i,dataset['body'][i])
                 dtweets += [i]
     dataset.drop(dataset.index[dtweets], inplace=True)
     dataset.reset_index(drop=True, inplace=True)
